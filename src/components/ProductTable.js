@@ -9,29 +9,26 @@ export default function ProductTable() {
 
     const products = productsData;
 
-    const uniqueCategories = useMemo(function () {
-        const categories = products.map(function (product) {
-            return product.category;
-        });
+    const uniqueCategories = useMemo(() => {
+        const categories = products.map(product => product.category);
+        //Use Set to select unique values, then spread back into an array
         return [...new Set(categories)];
     }, [products]);
 
-    const uniqueStatuses = useMemo(function () {
-        const statuses = products.map(function (product) {
-            return product.availabilityStatus;
-        });
+    const uniqueStatuses = useMemo(() => {
+        const statuses = products.map(product => product.availabilityStatus);
         return [...new Set(statuses)];
     }, [products]);
 
-    const filteredProducts = useMemo(function () {
-        return products.filter(function (product) {
+    const filteredProducts = useMemo(() => {
+        return products.filter(product => {
             const matchCategory = filters.category.length > 0 ? filters.category.includes(product.category) : true;
             const matchStatus = filters.availabilityStatus ? product.availabilityStatus === filters.availabilityStatus : true;
             return matchCategory && matchStatus;
         });
     }, [products, filters]);
 
-    const currentItems = useMemo(function () {
+    const currentItems = useMemo(() => {
         const startIndex = (currentPage - 1) * itemsPerPage;
         return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
     }, [filteredProducts, currentPage]);
@@ -42,7 +39,7 @@ export default function ProductTable() {
 
     function handleFilterChange(event) {
         const { name, value } = event.target;
-        setFilters(function (prevFilters) {
+        setFilters((prevFilters) => {
             return {
                 ...prevFilters,
                 [name]: value,
@@ -52,7 +49,7 @@ export default function ProductTable() {
 
     function handleCategoryChange(event) {
         const { value } = event.target;
-        setFilters(function (prevFilters) {
+        setFilters((prevFilters) => {
             return {
                 ...prevFilters,
                 category: value,
