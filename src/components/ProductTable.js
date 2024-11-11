@@ -1,8 +1,10 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import productsData from '../productsData';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
 import ProductRow from './ProductRow';
-import ProductFilters from './ProductFilters';
+
+// Lazy load ProductFilters
+const ProductFilters = lazy(() => import('./ProductFilters'));
 
 export default function ProductTable() {
     const [filters, setFilters] = useState({ category: [], availabilityStatus: '' });
@@ -21,7 +23,7 @@ export default function ProductTable() {
         localStorage.setItem('products', JSON.stringify(updatedProducts));
     }
 
-    //Use Set to select unique values, then spread back into an array
+    // Use Set to select unique values, then spread back into an array
     const uniqueCategories = useMemo(() => [...new Set(products.map(product => product.category))], [products]);
     const uniqueStatuses = useMemo(() => [...new Set(products.map(product => product.availabilityStatus))], [products]);
 
@@ -38,34 +40,34 @@ export default function ProductTable() {
         return filteredProducts.slice(startIndex, startIndex + itemsPerPage);
     }, [filteredProducts, currentPage, itemsPerPage]);
 
-    function handlePageChange(event, newPage) {
-    setCurrentPage(newPage + 1);
-    }
+    const handlePageChange = useCallback((event, newPage) => {
+        setCurrentPage(newPage + 1);
+    }, []);
 
-    function handleRowsPerPageChange(event) {
+    const handleRowsPerPageChange = useCallback((event) => {
         const newItemsPerPage = parseInt(event.target.value, 10);
         setItemsPerPage(newItemsPerPage);
         setCurrentPage(1);
-    }
+    }, []);
 
-    function handleStatusFilterChange(event) {
+    const handleStatusFilterChange = useCallback((event) => {
         const { name, value } = event.target;
         setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
         setCurrentPage(1);
-    }
+    }, []);
 
-    function handleCategoryFilterChange(event) {
+    const handleCategoryFilterChange = useCallback((event) => {
         const { value } = event.target;
         setFilters(prevFilters => ({ ...prevFilters, category: value }));
         setCurrentPage(1);
-    }
+    }, []);
 
-    function handleEdit(product) {
+    const handleEdit = useCallback((product) => {
         setEditingProductId(product.id);
         setEditedProduct({ ...product });
-    }
+    }, []);
 
-    function handleSave() {
+    const handleSave = useCallback(() => {
         const updatedProducts = products.map(p =>
             p.id === editingProductId ? { ...p, ...editedProduct } : p
         );
@@ -73,27 +75,31 @@ export default function ProductTable() {
         setProducts(updatedProducts);
         saveProducts(updatedProducts);
         setEditingProductId(null);
-    }
+    }, [editedProduct, editingProductId, products]);
 
-    function handleCancel() {
+    const handleCancel = useCallback(() => {
         setEditingProductId(null);
         setEditedProduct({});
-    }
+    }, []);
 
-    function handleUpdate(event) {
+    const handleUpdate = useCallback((event) => {
         const { name, value } = event.target;
         setEditedProduct(prevProduct => ({ ...prevProduct, [name]: value }));
-    }
+    }, []);
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f7f7f7', borderRadius: '8px' }}>
             <div style={{ marginBottom: '20px' }}>
-                <ProductFilters
-                    uniqueCategories={uniqueCategories}
-                    uniqueStatuses={uniqueStatuses}
-                    filters={filters}
-                    handleCategoryFilterChange={handleCategoryFilterChange}
-                    handleStatusFilterChange={handleStatusFilterChange}/>
+                {/* Suspense for lazy loading ProductFilters */}
+                <Suspense fallback={<div>Loading filters...</div>}>
+                    <ProductFilters
+                        uniqueCategories={uniqueCategories}
+                        uniqueStatuses={uniqueStatuses}
+                        filters={filters}
+                        handleCategoryFilterChange={handleCategoryFilterChange}
+                        handleStatusFilterChange={handleStatusFilterChange}
+                    />
+                </Suspense>
             </div>
 
             <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
