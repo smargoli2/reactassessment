@@ -1,3 +1,7 @@
-div {
+body {
     font-family: Karla, sans-serif;
+}
+
+.MuiTypography-root {
+    font-family: Karla, sans-serif !important;
 }

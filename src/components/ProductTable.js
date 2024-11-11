@@ -99,7 +99,7 @@ export default function ProductTable() {
         <div style={{ padding: '20px', backgroundColor: '#f7f7f7', borderRadius: '8px' }}>
             <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
                 <FormControl style={{ width: '250px' }}>
-                    <InputLabel>Category</InputLabel>
+                    <InputLabel sx={{ fontFamily: 'Karla, sans-serif' }}>Category</InputLabel>
                     <Select
                         name="category"
                         multiple
@@ -108,16 +108,16 @@ export default function ProductTable() {
                         label="Category"
                         renderValue={(selected) => selected.join(', ')}>
                         {uniqueCategories.map(category => (
-                            <MenuItem key={category} value={category}>
+                            <MenuItem key={category} value={category} sx={{ fontFamily: 'Karla, sans-serif' }}>
                                 <Checkbox checked={filters.category.indexOf(category) > -1} />
-                                <ListItemText primary={category} />
+                                <ListItemText primary={category} sx={{ fontFamily: 'Karla, sans-serif' }}/>
                             </MenuItem>
                         ))}
                     </Select>
                 </FormControl>
 
                 <FormControl style={{ width: '250px' }}>
-                    <InputLabel>Availability Status</InputLabel>
+                    <InputLabel sx={{ fontFamily: 'Karla, sans-serif' }}>Availability Status</InputLabel>
                     <Select
                         name="availabilityStatus"
                         value={filters.availabilityStatus}
@@ -131,23 +131,23 @@ export default function ProductTable() {
                 </FormControl>
             </div>
 
-            <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+            <TableContainer component={Paper} sx={{ boxShadow: 3}}>
                 <Table>
                     <TableHead sx={{ backgroundColor: '#7CB9E8', color: '#ffffff' }}>
                         <TableRow>
-                            <TableCell style={{ fontWeight: 'bold' }}>Name</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Price</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Category</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Brand</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Status</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Description</TableCell>
-                            <TableCell style={{ fontWeight: 'bold' }}>Actions</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Name</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Price</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Category</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Brand</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Status</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Description</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {currentItems.map(product => (
                             <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f0f0f0' } }}>
-                                <TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
                                     {/* If the product is being edited, show the input field */}
                                     {editingProductId === product.id ? (
                                         <TextField
@@ -156,7 +156,7 @@ export default function ProductTable() {
                                             onChange={handleUpdate}/>
                                     ) : product.name}
                                 </TableCell>
-                                <TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
                                     {editingProductId === product.id ? (
                                         <TextField
                                             name="price"
@@ -165,11 +165,11 @@ export default function ProductTable() {
                                             onChange={handleUpdate}/>
                                     ) : `$${product.price}`}
                                 </TableCell>
-                                <TableCell>{product.category}</TableCell>
-                                <TableCell>{product.brand}</TableCell>
-                                <TableCell>{product.availabilityStatus}</TableCell>
-                                <TableCell>{product.description}</TableCell>
-                                <TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.category}</TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.brand}</TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.availabilityStatus}</TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.description}</TableCell>
+                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
                                     {editingProductId === product.id ? (
                                         <>
                                             <IconButton onClick={handleSave}><SaveIcon /></IconButton>
