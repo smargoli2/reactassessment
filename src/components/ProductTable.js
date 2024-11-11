@@ -2,6 +2,7 @@ import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
 import productsData from '../productsData';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
 import ProductRow from './ProductRow';
+import ErrorBoundary from './ErrorBoundary';
 
 // Lazy load ProductFilters
 const ProductFilters = lazy(() => import('./ProductFilters'));
@@ -101,35 +102,36 @@ export default function ProductTable() {
                     />
                 </Suspense>
             </div>
-
-            <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
-                <Table>
-                    <TableHead sx={{ backgroundColor: '#7CB9E8', color: '#ffffff' }}>
-                        <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Name</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Price</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Category</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Brand</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Description</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Actions</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {currentItems.map(product => (
-                            <ProductRow
-                                key={product.id}
-                                product={product}
-                                editingProductId={editingProductId}
-                                editedProduct={editedProduct}
-                                onEdit={handleEdit}
-                                onSave={handleSave}
-                                onCancel={handleCancel}
-                                onUpdate={handleUpdate}/>
-                        ))}
-                    </TableBody>
-                </Table>
-            </TableContainer>
+            <ErrorBoundary>
+                <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
+                    <Table>
+                        <TableHead sx={{ backgroundColor: '#7CB9E8', color: '#ffffff' }}>
+                            <TableRow>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Name</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Price</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Category</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Brand</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Status</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Description</TableCell>
+                                <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Actions</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {currentItems.map(product => (
+                                <ProductRow
+                                    key={product.id}
+                                    product={product}
+                                    editingProductId={editingProductId}
+                                    editedProduct={editedProduct}
+                                    onEdit={handleEdit}
+                                    onSave={handleSave}
+                                    onCancel={handleCancel}
+                                    onUpdate={handleUpdate} />
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </ErrorBoundary>
 
             <TablePagination
                 rowsPerPageOptions={[5, 10, 25]}
@@ -138,7 +140,7 @@ export default function ProductTable() {
                 rowsPerPage={itemsPerPage}
                 page={currentPage - 1}
                 onPageChange={handlePageChange}
-                onRowsPerPageChange={handleRowsPerPageChange}/>
+                onRowsPerPageChange={handleRowsPerPageChange} />
         </div>
     );
 }
