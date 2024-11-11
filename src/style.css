@@ -1,7 +1,7 @@
 body {
-    font-family: Karla, sans-serif;
+    font-family: Host Grotesk, sans-serif;
 }
 
-.MuiTypography-root {
-    font-family: Karla, sans-serif !important;
+.MuiTypography-root, .MuiButtonBase-root, .MuiSelect-select {
+    font-family: Host Grotesk, sans-serif !important;
 }

@@ -1,13 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import productsData from '../productsData';
-import {
-    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination,
-    Select, MenuItem, InputLabel, FormControl, Checkbox, ListItemText, Paper, IconButton,
-    TextField
-} from '@mui/material';
-import EditIcon from '@mui/icons-material/Edit';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Cancel';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
+import ProductRow from './ProductRow';
+import ProductFilters from './ProductFilters';
 
 export default function ProductTable() {
     const [filters, setFilters] = useState({ category: [], availabilityStatus: '' });
@@ -26,14 +21,9 @@ export default function ProductTable() {
         localStorage.setItem('products', JSON.stringify(updatedProducts));
     }
 
-    const uniqueCategories = useMemo(() => {
-        //Use Set to select unique values, then spread back into an array
-        return [...new Set(products.map(product => product.category))];
-    }, [products]);
-
-    const uniqueStatuses = useMemo(() => {
-        return [...new Set(products.map(product => product.availabilityStatus))];
-    }, [products]);
+    //Use Set to select unique values, then spread back into an array
+    const uniqueCategories = useMemo(() => [...new Set(products.map(product => product.category))], [products]);
+    const uniqueStatuses = useMemo(() => [...new Set(products.map(product => product.availabilityStatus))], [products]);
 
     const filteredProducts = useMemo(() => {
         return products.filter(product => {
@@ -49,25 +39,25 @@ export default function ProductTable() {
     }, [filteredProducts, currentPage, itemsPerPage]);
 
     function handlePageChange(event, newPage) {
-        setCurrentPage(newPage + 1);
+    setCurrentPage(newPage + 1);
     }
 
     function handleRowsPerPageChange(event) {
         const newItemsPerPage = parseInt(event.target.value, 10);
         setItemsPerPage(newItemsPerPage);
         setCurrentPage(1);
-    };
+    }
 
     function handleStatusFilterChange(event) {
         const { name, value } = event.target;
         setFilters(prevFilters => ({ ...prevFilters, [name]: value }));
-        setCurrentPage(1); 
+        setCurrentPage(1);
     }
 
     function handleCategoryFilterChange(event) {
         const { value } = event.target;
         setFilters(prevFilters => ({ ...prevFilters, category: value }));
-        setCurrentPage(1); 
+        setCurrentPage(1);
     }
 
     function handleEdit(product) {
@@ -97,89 +87,39 @@ export default function ProductTable() {
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f7f7f7', borderRadius: '8px' }}>
-            <div style={{ marginBottom: '20px', display: 'flex', gap: '20px' }}>
-                <FormControl style={{ width: '250px' }}>
-                    <InputLabel sx={{ fontFamily: 'Karla, sans-serif' }}>Category</InputLabel>
-                    <Select
-                        name="category"
-                        multiple
-                        value={filters.category}
-                        onChange={handleCategoryFilterChange}
-                        label="Category"
-                        renderValue={(selected) => selected.join(', ')}>
-                        {uniqueCategories.map(category => (
-                            <MenuItem key={category} value={category} sx={{ fontFamily: 'Karla, sans-serif' }}>
-                                <Checkbox checked={filters.category.indexOf(category) > -1} />
-                                <ListItemText primary={category} sx={{ fontFamily: 'Karla, sans-serif' }}/>
-                            </MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
-
-                <FormControl style={{ width: '250px' }}>
-                    <InputLabel sx={{ fontFamily: 'Karla, sans-serif' }}>Availability Status</InputLabel>
-                    <Select
-                        name="availabilityStatus"
-                        value={filters.availabilityStatus}
-                        onChange={handleStatusFilterChange}
-                        label="Availability Status">
-                        <MenuItem value="">All</MenuItem>
-                        {uniqueStatuses.map(status => (
-                            <MenuItem key={status} value={status}>{status}</MenuItem>
-                        ))}
-                    </Select>
-                </FormControl>
+            <div style={{ marginBottom: '20px' }}>
+                <ProductFilters
+                    uniqueCategories={uniqueCategories}
+                    uniqueStatuses={uniqueStatuses}
+                    filters={filters}
+                    handleCategoryFilterChange={handleCategoryFilterChange}
+                    handleStatusFilterChange={handleStatusFilterChange}/>
             </div>
 
-            <TableContainer component={Paper} sx={{ boxShadow: 3}}>
+            <TableContainer component={Paper} sx={{ boxShadow: 3 }}>
                 <Table>
                     <TableHead sx={{ backgroundColor: '#7CB9E8', color: '#ffffff' }}>
                         <TableRow>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Name</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Price</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Category</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Brand</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Status</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Description</TableCell>
-                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>Actions</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Name</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Price</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Category</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Brand</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Status</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Description</TableCell>
+                            <TableCell sx={{ fontWeight: 'bold', fontFamily: 'Host Grotesk, sans-serif', fontSize: '1rem' }}>Actions</TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {currentItems.map(product => (
-                            <TableRow key={product.id} sx={{ '&:hover': { backgroundColor: '#f0f0f0' } }}>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
-                                    {/* If the product is being edited, show the input field */}
-                                    {editingProductId === product.id ? (
-                                        <TextField
-                                            name="name"
-                                            value={editedProduct.name || ''}
-                                            onChange={handleUpdate}/>
-                                    ) : product.name}
-                                </TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
-                                    {editingProductId === product.id ? (
-                                        <TextField
-                                            name="price"
-                                            type="number"
-                                            value={editedProduct.price || ''}
-                                            onChange={handleUpdate}/>
-                                    ) : `$${product.price}`}
-                                </TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.category}</TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.brand}</TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.availabilityStatus}</TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>{product.description}</TableCell>
-                                <TableCell sx={{ fontFamily: 'Karla, sans-serif', fontSize: '1rem' }}>
-                                    {editingProductId === product.id ? (
-                                        <>
-                                            <IconButton onClick={handleSave}><SaveIcon /></IconButton>
-                                            <IconButton onClick={handleCancel}><CancelIcon /></IconButton>
-                                        </>
-                                    ) : (
-                                        <IconButton onClick={() => handleEdit(product)}><EditIcon /></IconButton>
-                                    )}
-                                </TableCell>
-                            </TableRow>
+                            <ProductRow
+                                key={product.id}
+                                product={product}
+                                editingProductId={editingProductId}
+                                editedProduct={editedProduct}
+                                onEdit={handleEdit}
+                                onSave={handleSave}
+                                onCancel={handleCancel}
+                                onUpdate={handleUpdate}/>
                         ))}
                     </TableBody>
                 </Table>
