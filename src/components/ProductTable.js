@@ -1,13 +1,16 @@
-import React, { useState, useMemo, useCallback, lazy, Suspense } from 'react';
-import productsData from '../productsData';
+import React, { useState, useMemo, useCallback, lazy, Suspense, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
 import ProductRow from './ProductRow';
 import ErrorBoundary from './ErrorBoundary';
+import { mockFetchProducts } from "../services/mockFetch";
+import Button from "@mui/material/Button";
+import CircularProgress from "@mui/material/CircularProgress";
+import Alert from "@mui/material/Alert";
 
 // Lazy load ProductFilters
 const ProductFilters = lazy(() => import('./ProductFilters'));
 
-export default function ProductTable() {
+export default function ProductTable(props) {
     const [filters, setFilters] = useState({ category: [], availabilityStatus: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const [editingProductId, setEditingProductId] = useState(null);
@@ -15,10 +18,32 @@ export default function ProductTable() {
     const [itemsPerPage, setItemsPerPage] = useState(5);
 
     // Get products from localStorage or productsData
-    const [products, setProducts] = useState(() => {
-        const storedProducts = localStorage.getItem('products');
-        return storedProducts ? JSON.parse(storedProducts) : productsData;
-    });
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [loadDataError, setLoadDataError] = useState(null);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        setLoadDataError(null);
+        try {
+            const fetchedProducts = await mockFetchProducts(props.shouldFail);
+            setProducts(fetchedProducts);
+        } catch (err) {
+            setLoadDataError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        const storedProducts = localStorage.getItem("products");
+
+        if (storedProducts) {
+            setProducts(JSON.parse(storedProducts));
+        } else {
+            fetchProducts();
+        }
+    }, []);
 
     function saveProducts(updatedProducts) {
         localStorage.setItem('products', JSON.stringify(updatedProducts));
@@ -90,6 +115,17 @@ export default function ProductTable() {
 
     return (
         <div style={{ padding: '20px', backgroundColor: '#f7f7f7', borderRadius: '8px' }}>
+            {loading && <CircularProgress data-testid="loading-indicator" />}
+            {loadDataError && (
+                <>
+                    <Alert severity="error" style={{ marginBottom: "20px" }}>
+                        {loadDataError}
+                    </Alert>
+                    <Button variant="contained" color="primary" onClick={fetchProducts} style={{ marginBottom: '20px' }} data-testid="retry-button">
+                        Retry
+                    </Button>
+                </>
+            )}
             <div style={{ marginBottom: '20px' }}>
                 {/* Suspense for lazy loading ProductFilters */}
                 <Suspense fallback={<div>Loading filters...</div>}>

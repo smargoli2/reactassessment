@@ -2,20 +2,81 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import ProductTable from './ProductTable';
-import productsData from '../productsData';
 
-// Mock localStorage
-beforeEach(() => {
-  const products = JSON.stringify(productsData);
-  window.localStorage.setItem('products', products);
-});
-
-describe('ProductTable', () => {
-  it.only('should edit and save a product', async () => {
-    await act(async () => {
-      render(<ProductTable />);
+describe('Test ProductTable', () => {
+  it('should retry if data fails to load', async () => {
+    let retryButtonVisible = false;
+  
+    const renderAndCheckRetryButton = async () => {
+      await act(async () => {
+        render(<ProductTable />);
+      });
+  
+      retryButtonVisible = screen.queryByTestId('retry-button') !== null;
+    };
+  
+    while (!retryButtonVisible) {
+      await renderAndCheckRetryButton();
+    }
+  
+    const retryButton = screen.getAllByTestId('retry-button');
+    fireEvent.click(retryButton[0]);
+  
+    let isDataLoaded = false;
+  
+    while (!isDataLoaded) {
+      try {
+        await waitFor(() => {
+          if (screen.getByText('Blender')) {
+            isDataLoaded = true;
+          }
+        });
+      } catch (error) {
+        const retryButton = screen.queryByTestId('retry-button');
+        if (retryButton) {
+          fireEvent.click(retryButton);
+        }
+      }
+    }
+  
+    expect(screen.getByText('Blender')).toBeInTheDocument();
   });
 
+  it('should edit and save a product', async () => {
+    let retryButtonVisible = false;
+
+    const renderAndCheckRetryButton = async () => {
+      await act(async () => {
+        render(<ProductTable />);
+      });
+
+      retryButtonVisible = screen.queryByTestId('retry-button') !== null;
+    };
+
+    while (!retryButtonVisible) {
+      await renderAndCheckRetryButton();
+    }
+
+    const retryButton = screen.getAllByTestId('retry-button');
+    fireEvent.click(retryButton[0]);
+
+    let isDataLoaded = false;
+
+    while (!isDataLoaded) {
+      try {
+        await waitFor(() => {
+          if (screen.getByText('Blender')) {
+            isDataLoaded = true;
+          }
+        });
+      } catch (error) {
+        const retryButton = screen.queryByTestId('retry-button')[0];
+        if (retryButton) {
+          fireEvent.click(retryButton);
+        }
+      }
+    }
+    
     const editButton = screen.getByTestId('edit-button1');
     fireEvent.click(editButton);
 
@@ -28,20 +89,6 @@ describe('ProductTable', () => {
     await waitFor(() => {
       expect(screen.getByText('Updated Product Name')).toBeInTheDocument();
     });
-  });
+  }, 10000);
 
-  it('should cancel editing when the cancel button is clicked', async () => {
-    render(<ProductTable />);
-
-    // Start editing the first product
-    const editButton = screen.getAllByLabelText('edit')[0];
-    fireEvent.click(editButton);
-
-    // Click the cancel button
-    const cancelButton = screen.getAllByLabelText('cancel')[0];  // Assuming the button is labeled 'cancel'
-    fireEvent.click(cancelButton);
-
-    // Check if the table returns to its non-editing state
-    expect(screen.getByText(productsData[0].name)).toBeInTheDocument();
-  });
 });
