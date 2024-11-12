@@ -17,10 +17,10 @@ export default function ProductTable(props) {
     const [editedProduct, setEditedProduct] = useState({});
     const [itemsPerPage, setItemsPerPage] = useState(5);
 
-    // Get products from localStorage or productsData
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadDataError, setLoadDataError] = useState(null);
+    const [saveError, setSaveError] = useState(null);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -94,13 +94,27 @@ export default function ProductTable(props) {
     }, []);
 
     const handleSave = useCallback(() => {
+        setSaveError(null);
         const updatedProducts = products.map(p =>
             p.id === editingProductId ? { ...p, ...editedProduct } : p
         );
 
-        setProducts(updatedProducts);
-        saveProducts(updatedProducts);
-        setEditingProductId(null);
+        try {
+            const isNetworkError = Math.random() < 0.5; // 30% chance of network error
+
+            if (isNetworkError) {
+                throw new Error("Network error. Please check your connection and click Retry.");
+            } else if (Math.random() < 0.3) { // 30% chance of API error
+                throw new Error("Invalid product data. Please update and try again.");
+            }
+
+            setProducts(updatedProducts);
+            saveProducts(updatedProducts);
+            setEditingProductId(null);
+            setSaveError(null);
+        } catch (error) {
+            setSaveError(error.message);
+        }
     }, [editedProduct, editingProductId, products]);
 
     const handleCancel = useCallback(() => {
@@ -116,15 +130,38 @@ export default function ProductTable(props) {
     return (
         <div style={{ padding: '20px', backgroundColor: '#f7f7f7', borderRadius: '8px' }}>
             {loading && <CircularProgress data-testid="loading-indicator" />}
-            {loadDataError && (
+            {loadDataError && !loading && (
                 <>
                     <Alert severity="error" style={{ marginBottom: "20px" }}>
                         {loadDataError}
                     </Alert>
-                    <Button variant="contained" color="primary" onClick={fetchProducts} style={{ marginBottom: '20px' }} data-testid="retry-button">
+                    <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={fetchProducts}
+                        style={{ marginBottom: '20px' }}
+                        data-testid="retry-button"
+                    >
                         Retry
                     </Button>
                 </>
+            )}
+            {saveError && (
+                <Alert severity="error" style={{ marginBottom: "20px" }}>
+                    {saveError}
+                </Alert>
+            )}
+
+            {saveError && saveError.includes("Network error") && (
+                <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSave}
+                    style={{ marginBottom: '20px' }}
+                    data-testid="retry-button"
+                >
+                    Retry
+                </Button>
             )}
             <div style={{ marginBottom: '20px' }}>
                 {/* Suspense for lazy loading ProductFilters */}
