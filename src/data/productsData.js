@@ -7,6 +7,7 @@ const products = [
     price: 89.99,
     availabilityStatus: "In Stock",
     description: "A high-speed blender for smoothies, shakes, and soups.",
+    lastModified: new Date().toISOString(), // Added lastModified field
   },
   {
     id: 2,
@@ -16,6 +17,7 @@ const products = [
     price: 49.99,
     availabilityStatus: "Out of Stock",
     description: "A 4-slice toaster with adjustable browning control.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 3,
@@ -25,6 +27,7 @@ const products = [
     price: 129.99,
     availabilityStatus: "In Stock",
     description: "An air fryer that cooks with minimal oil for healthier meals.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 4,
@@ -34,6 +37,7 @@ const products = [
     price: 199.99,
     availabilityStatus: "In Stock",
     description: "A compact microwave oven with inverter technology for even cooking.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 5,
@@ -43,6 +47,7 @@ const products = [
     price: 299.99,
     availabilityStatus: "In Stock",
     description: "A versatile stand mixer with multiple attachments for baking.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 6,
@@ -52,6 +57,7 @@ const products = [
     price: 159.99,
     availabilityStatus: "In Stock",
     description: "A programmable coffee maker with a built-in grinder.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 7,
@@ -61,6 +67,7 @@ const products = [
     price: 39.99,
     availabilityStatus: "In Stock",
     description: "A slow cooker for making stews, soups, and tender meat dishes.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 8,
@@ -70,6 +77,7 @@ const products = [
     price: 29.99,
     availabilityStatus: "In Stock",
     description: "A stainless steel electric kettle with auto shut-off.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 9,
@@ -79,6 +87,7 @@ const products = [
     price: 99.99,
     availabilityStatus: "In Stock",
     description: "A multi-functional food processor with various slicing blades.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 10,
@@ -88,6 +97,7 @@ const products = [
     price: 149.99,
     availabilityStatus: "In Stock",
     description: "A slow masticating juicer for fresh, nutrient-rich juice.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 11,
@@ -97,6 +107,7 @@ const products = [
     price: 129.99,
     availabilityStatus: "In Stock",
     description: "An advanced rice cooker with multiple cooking functions.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 12,
@@ -106,6 +117,7 @@ const products = [
     price: 39.99,
     availabilityStatus: "In Stock",
     description: "A non-stick waffle maker with quick heating technology.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 13,
@@ -115,6 +127,7 @@ const products = [
     price: 49.99,
     availabilityStatus: "In Stock",
     description: "A large non-stick griddle for pancakes, bacon, and more.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 14,
@@ -124,6 +137,7 @@ const products = [
     price: 24.99,
     availabilityStatus: "Out of Stock",
     description: "A lightweight hand mixer with multiple speed settings.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 15,
@@ -133,6 +147,7 @@ const products = [
     price: 59.99,
     availabilityStatus: "In Stock",
     description: "A hand-held immersion blender for soups and smoothies.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 16,
@@ -142,6 +157,7 @@ const products = [
     price: 79.99,
     availabilityStatus: "In Stock",
     description: "An electric deep fryer with an oil filtration system.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 17,
@@ -151,6 +167,7 @@ const products = [
     price: 69.99,
     availabilityStatus: "In Stock",
     description: "An easy-to-use ice cream maker for homemade frozen treats.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 18,
@@ -160,6 +177,7 @@ const products = [
     price: 119.99,
     availabilityStatus: "In Stock",
     description: "A versatile electric pressure cooker with multiple functions.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 19,
@@ -169,6 +187,7 @@ const products = [
     price: 229.99,
     availabilityStatus: "In Stock",
     description: "A high-quality bread maker with customizable settings.",
+    lastModified: new Date().toISOString(),
   },
   {
     id: 20,
@@ -178,6 +197,7 @@ const products = [
     price: 34.99,
     availabilityStatus: "In Stock",
     description: "An electric popcorn maker for quick and easy snacks.",
+    lastModified: new Date().toISOString(),
   },
 ];
 

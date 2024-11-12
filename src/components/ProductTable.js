@@ -15,26 +15,15 @@ export default function ProductTable() {
     const [currentPage, setCurrentPage] = useState(1);
     const [editingProductId, setEditingProductId] = useState(null);
     const [editedProduct, setEditedProduct] = useState({});
+    const [lastModified, setLastModified] = useState(null);
     const [itemsPerPage, setItemsPerPage] = useState(5);
 
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [loadDataError, setLoadDataError] = useState(null);
     const [saveError, setSaveError] = useState(null);
+    const [conflictError, setConflictError] = useState(null);
 
-    const fetchProducts = () => {
-        setLoading(true);
-        setLoadDataError(null);
-            const shouldFail = Math.random() < 0.3; // 30% chance of failure
-    
-            if (shouldFail) {
-              setLoadDataError("Failed to load data. Please try again.");
-            } else {
-                setProducts(productsData);
-            }
-            setLoading(false);
-        };
-    
     useEffect(() => {
         const storedProducts = localStorage.getItem("products");
 
@@ -45,10 +34,23 @@ export default function ProductTable() {
         }
     }, []);
 
+    const fetchProducts = () => {
+        setLoading(true);
+        setLoadDataError(null);
+        const shouldFail = Math.random() < 0.3; // 30% chance of failure
+
+        if (shouldFail) {
+            setLoadDataError("Failed to load data. Please try again.");
+        } else {
+            setProducts(productsData);
+        }
+        setLoading(false);
+    };
+
+    // Save products to localStorage
     function saveProducts(updatedProducts) {
         localStorage.setItem('products', JSON.stringify(updatedProducts));
     }
-
     // Use Set to select unique values, then spread back into an array
     const uniqueCategories = useMemo(() => [...new Set(products.map(product => product.category))], [products]);
     const uniqueStatuses = useMemo(() => [...new Set(products.map(product => product.availabilityStatus))], [products]);
@@ -91,16 +93,25 @@ export default function ProductTable() {
     const handleEdit = useCallback((product) => {
         setEditingProductId(product.id);
         setEditedProduct({ ...product });
+        setLastModified(product.lastModified);
+        setConflictError(null);
     }, []);
 
     const handleSave = useCallback(() => {
         setSaveError(null);
+        setConflictError(null);
         const updatedProducts = products.map(p =>
             p.id === editingProductId ? { ...p, ...editedProduct } : p
         );
 
+        const product = updatedProducts.find(p => p.id === editingProductId);
+        if (product.lastModified !== lastModified) {
+            setConflictError("This product has been updated by another user. Please resolve the conflict.");
+            return;
+        }
+
         try {
-            const isNetworkError = Math.random() < 0.5; // 30% chance of network error
+            const isNetworkError = Math.random() < 0.3; // 30% chance of network error
 
             if (isNetworkError) {
                 throw new Error("Network error. Please check your connection and click Retry.");
@@ -115,11 +126,12 @@ export default function ProductTable() {
         } catch (error) {
             setSaveError(error.message);
         }
-    }, [editedProduct, editingProductId, products]);
+    }, [editedProduct, editingProductId, products, lastModified]);
 
     const handleCancel = useCallback(() => {
         setEditingProductId(null);
         setEditedProduct({});
+        setConflictError(null);
     }, []);
 
     const handleUpdate = useCallback((event) => {
@@ -151,7 +163,11 @@ export default function ProductTable() {
                     {saveError}
                 </Alert>
             )}
-
+            {conflictError && (
+                <Alert severity="error" style={{ marginBottom: "20px" }}>
+                    {conflictError}
+                </Alert>
+            )}
             {saveError && saveError.includes("Network error") && (
                 <Button
                     variant="contained"
