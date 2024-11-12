@@ -2,7 +2,7 @@ import React, { useState, useMemo, useCallback, lazy, Suspense, useEffect } from
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, TablePagination, Paper } from '@mui/material';
 import ProductRow from './ProductRow';
 import ErrorBoundary from './ErrorBoundary';
-import { mockFetchProducts } from "../services/mockFetch";
+import productsData from '../data/productsData';
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Alert from "@mui/material/Alert";
@@ -10,7 +10,7 @@ import Alert from "@mui/material/Alert";
 // Lazy load ProductFilters
 const ProductFilters = lazy(() => import('./ProductFilters'));
 
-export default function ProductTable(props) {
+export default function ProductTable() {
     const [filters, setFilters] = useState({ category: [], availabilityStatus: '' });
     const [currentPage, setCurrentPage] = useState(1);
     const [editingProductId, setEditingProductId] = useState(null);
@@ -22,19 +22,19 @@ export default function ProductTable(props) {
     const [loadDataError, setLoadDataError] = useState(null);
     const [saveError, setSaveError] = useState(null);
 
-    const fetchProducts = async () => {
+    const fetchProducts = () => {
         setLoading(true);
         setLoadDataError(null);
-        try {
-            const fetchedProducts = await mockFetchProducts(props.shouldFail);
-            setProducts(fetchedProducts);
-        } catch (err) {
-            setLoadDataError(err);
-        } finally {
+            const shouldFail = Math.random() < 0.3; // 30% chance of failure
+    
+            if (shouldFail) {
+              setLoadDataError("Failed to load data. Please try again.");
+            } else {
+                setProducts(productsData);
+            }
             setLoading(false);
-        }
-    };
-
+        };
+    
     useEffect(() => {
         const storedProducts = localStorage.getItem("products");
 
